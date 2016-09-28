@@ -40,6 +40,7 @@ String readFile(String _fileName) {
   File ledFile = SD.open(fileName);
 
   if (ledFile) {
+    Serial.println(_fileName);
     // read from the file until there's nothing else in it:
     while (ledFile.available()) {
       char newChar = (char)ledFile.read();
@@ -100,7 +101,7 @@ KeyFrames parseLedFile(String readBuffer) {
     keyframes.addKeyframe(time, Color(RGB_MODE, r, g, b));
 
 
-    startLine = cr + 2;
+    startLine = cr + 1;
     i++;
 
     Serial.print("time: ");
