@@ -1,27 +1,44 @@
 #include "keyframes.h"
 
+#define PLAYERSAM  2
+
 String readBuffer = "";
 char newLineChar = ' '; // 0 undefined; 1 LF '\n'; 2 CR '\r'
 
+LEDPlayer players[PLAYERSAM];
 
-void readFiles() {
+
+boolean readFiles() {
   readBuffer = readFile("LED.TXT");
   if (!readBuffer.equals("")) {
-    parseLedFile(readBuffer);
+    KeyFrames keyframes = parseLedFile(readBuffer);
+    players[0] = LEDPlayer(&keyframes, &seg[2]);
+    players[1] = LEDPlayer(&keyframes, &seg[3]);
   } else {
     readBuffer = readFile("LED1.TXT");
-    readBuffer = readFile("LED2.TXT");
-  }
+    KeyFrames keyframes1 = parseLedFile(readBuffer);
+    if (readBuffer.equals("")) return false;
 
+    readBuffer = readFile("LED2.TXT");
+    KeyFrames keyframes2 = parseLedFile(readBuffer);
+    if (readBuffer.equals("")) {
+      players[0] = LEDPlayer(&keyframes1, &seg[2]);
+      players[1] = LEDPlayer(&keyframes1, &seg[3]);
+    }else {
+      players[0] = LEDPlayer(&keyframes1, &seg[2]);
+      players[1] = LEDPlayer(&keyframes2, &seg[3]);
+    }
+  }
+  return true;
 }
 
 String readFile(String _fileName) {
   String _readBuffer = "";
-  
+
   char fileName[_fileName.length() + 1];
   _fileName.toCharArray(fileName, sizeof(fileName));
   File ledFile = SD.open(fileName);
-  
+
   if (ledFile) {
     // read from the file until there's nothing else in it:
     while (ledFile.available()) {

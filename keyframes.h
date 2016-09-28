@@ -20,7 +20,7 @@ class KeyFrames {
 
   private:
     KeyFrame keyframeArr[KEYFRAME_MAX_AM];
-    int keyframeAm;
+    unsigned int keyframeAm;
 
 };
 

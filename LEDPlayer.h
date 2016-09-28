@@ -2,8 +2,6 @@
 #define LEDPlayer_h
 
 
-
-
 class LEDPlayer {
   public:
     LEDPlayer();

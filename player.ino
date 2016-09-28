@@ -1,7 +1,3 @@
-#define PLAYERSAM  2
-
-LEDPlayer players[PLAYERSAM];
-
 
 void startPlaying() {
   playing = true;
