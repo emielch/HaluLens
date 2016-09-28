@@ -9,9 +9,10 @@ Beam beams[BEAM_AM];
 Adafruit_DotStar leds = Adafruit_DotStar(LED_AM, DATAPIN, CLOCKPIN, DOTSTAR_BGR);
 
 Segment seg[] = {
-   Segment(0,5),  // 0
-   Segment(0,5),  // 1
-   Segment(0,5),  // 2
+   Segment(0,5),  // 0  rainbow
+   Segment(0,5),  // 1  mask
+   Segment(0,2),  // 2  keyframes left
+   Segment(3,5),  // 2  keyframes right
 };
 
 byte segAm = sizeof(seg)/sizeof(Segment);

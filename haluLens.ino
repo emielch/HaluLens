@@ -6,6 +6,9 @@
 #include <Colore.h>
 #include <Adafruit_DotStar.h>
 
+#include "keyframes.h"
+#include "LEDPlayer.h"
+
 
 AudioPlaySdWav           playWav;
 AudioOutputI2S           audioOutput;
@@ -16,8 +19,6 @@ AudioControlSGTL5000     sgtl5000_1;
 #define SDCARD_CS_PIN    10
 #define SDCARD_MOSI_PIN  7
 #define SDCARD_SCK_PIN   14
-
-#define KEYFRAME_MAX_AM       300
 
 boolean playing = false;
 
@@ -45,7 +46,7 @@ void setup() {
     }
   }
 
-  readFile();
+  readFiles();
   stopPlaying();
 }
 

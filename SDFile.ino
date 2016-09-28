@@ -1,40 +1,52 @@
-File ledFile;
+#include "keyframes.h"
+
 String readBuffer = "";
 char newLineChar = ' '; // 0 undefined; 1 LF '\n'; 2 CR '\r'
 
-struct keyframe {
-  unsigned long time;
-  Color col;
-};
 
-keyframe keyframes[KEYFRAME_MAX_AM];
-int keyframeAm = 0;
+void readFiles() {
+  readBuffer = readFile("LED.TXT");
+  if (!readBuffer.equals("")) {
+    parseLedFile(readBuffer);
+  } else {
+    readBuffer = readFile("LED1.TXT");
+    readBuffer = readFile("LED2.TXT");
+  }
 
-void readFile() {
-  ledFile = SD.open("LED.TXT");
+}
+
+String readFile(String _fileName) {
+  String _readBuffer = "";
+  
+  char fileName[_fileName.length() + 1];
+  _fileName.toCharArray(fileName, sizeof(fileName));
+  File ledFile = SD.open(fileName);
+  
   if (ledFile) {
     // read from the file until there's nothing else in it:
     while (ledFile.available()) {
       char newChar = (char)ledFile.read();
-      if(newLineChar == ' '){
-        if(newChar == '\r') newLineChar = '\r';
-        else if(newChar == '\n') newLineChar = '\n';
+      if (newLineChar == ' ') {
+        if (newChar == '\r') newLineChar = '\r';
+        else if (newChar == '\n') newLineChar = '\n';
       }
-      if(newLineChar == '\n' && newChar == '\r') continue;
-      if(newLineChar == '\r' && newChar == '\n') continue;
-      if(newChar == ' ') continue;
-      readBuffer += newChar;
+      if (newLineChar == '\n' && newChar == '\r') continue;
+      if (newLineChar == '\r' && newChar == '\n') continue;
+      if (newChar == ' ') continue;
+      _readBuffer += newChar;
     }
     // close the file:
     ledFile.close();
-    parseLedFile();
   } else {
     // if the file didn't open, print an error:
     Serial.println("error opening led.txt");
   }
+  return _readBuffer;
 }
 
-void parseLedFile() {
+KeyFrames parseLedFile(String readBuffer) {
+  KeyFrames keyframes;
+
   int startLine = 0;
   int cr = 0;
   int i = 0;
@@ -58,7 +70,7 @@ void parseLedFile() {
       unsigned long num;
       if (comma == -1) num = line.substring(startInt).toInt();
       else num = line.substring(startInt, comma).toInt();
-      
+
       if (j == 0) time = num;
       else if (j == 1) r = num;
       else if (j == 2) g = num;
@@ -68,8 +80,8 @@ void parseLedFile() {
       j++;
     }
 
-    keyframes[i].time = time;
-    keyframes[i].col.setRGB(r, g, b);
+    keyframes.addKeyframe(time, Color(RGB_MODE, r, g, b));
+
 
     startLine = cr + 2;
     i++;
@@ -83,6 +95,5 @@ void parseLedFile() {
     Serial.print(" B: ");
     Serial.println(b);
   }
-  keyframeAm = i;
-  Serial.println(keyframeAm);
+
 }
