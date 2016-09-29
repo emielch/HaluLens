@@ -4,7 +4,7 @@
 #include <SD.h>
 #include <SerialFlash.h>
 #include <Colore.h>
-#include <Adafruit_DotStar.h>
+#include <Adafruit_NeoPixel.h>
 
 #include "keyframes.h"
 #include "LEDPlayer.h"

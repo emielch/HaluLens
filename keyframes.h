@@ -10,6 +10,8 @@ struct KeyFrame {
   Color col;
 };
 
+KeyFrame emptyKey = {0, Color(RGB_MODE,0,0,0)};
+
 
 class KeyFrames {
   public:
@@ -38,7 +40,7 @@ KeyFrame KeyFrames::getKeyframe(unsigned int id) {
   if (id < keyframeAm) {
     return keyframeArr[id];
   }
-  return keyframeArr[0];
+  return emptyKey;
 }
 
 int KeyFrames::getKeyframeAm(){

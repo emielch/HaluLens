@@ -12,6 +12,7 @@ void stopPlaying() {
   playing = false;
   playWav.stop();
   seg[2].setFade(Color(0, 0, 0, RGB_MODE), 0.5);
+  seg[3].setFade(Color(0, 0, 0, RGB_MODE), 0.5);
   seg[1].setFade(Color(255, 255, 255, RGB_MODE), 0.5);
 }
 

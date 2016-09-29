@@ -7,20 +7,23 @@ char newLineChar = ' '; // 0 undefined; 1 LF '\n'; 2 CR '\r'
 
 LEDPlayer players[PLAYERSAM];
 
+KeyFrames keyframes1;
+KeyFrames keyframes2;
+
 
 boolean readFiles() {
   readBuffer = readFile("LED.TXT");
   if (!readBuffer.equals("")) {
-    KeyFrames keyframes = parseLedFile(readBuffer);
-    players[0] = LEDPlayer(&keyframes, &seg[2]);
-    players[1] = LEDPlayer(&keyframes, &seg[3]);
+    parseLedFile(readBuffer,&keyframes1);
+    players[0] = LEDPlayer(&keyframes1, &seg[2]);
+    players[1] = LEDPlayer(&keyframes1, &seg[3]);
   } else {
     readBuffer = readFile("LED1.TXT");
-    KeyFrames keyframes1 = parseLedFile(readBuffer);
+    parseLedFile(readBuffer,&keyframes1);
     if (readBuffer.equals("")) return false;
 
     readBuffer = readFile("LED2.TXT");
-    KeyFrames keyframes2 = parseLedFile(readBuffer);
+    parseLedFile(readBuffer,&keyframes2);
     if (readBuffer.equals("")) {
       players[0] = LEDPlayer(&keyframes1, &seg[2]);
       players[1] = LEDPlayer(&keyframes1, &seg[3]);
@@ -62,9 +65,7 @@ String readFile(String _fileName) {
   return _readBuffer;
 }
 
-KeyFrames parseLedFile(String readBuffer) {
-  KeyFrames keyframes;
-
+KeyFrames parseLedFile(String readBuffer, KeyFrames *keyframes) {
   int startLine = 0;
   int cr = 0;
   int i = 0;
@@ -98,7 +99,7 @@ KeyFrames parseLedFile(String readBuffer) {
       j++;
     }
 
-    keyframes.addKeyframe(time, Color(RGB_MODE, r, g, b));
+    keyframes->addKeyframe(time, Color(r, g, b, RGB_MODE));
 
 
     startLine = cr + 1;
