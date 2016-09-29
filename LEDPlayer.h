@@ -12,7 +12,7 @@ class LEDPlayer {
   private:
     KeyFrames *keyframes;
     Segment *segment;
-    int passedKeyframe;
+    int nextKeyframe;
     boolean activated;
 };
 
@@ -24,30 +24,33 @@ LEDPlayer::LEDPlayer(KeyFrames* k, Segment* s) {
   activated = true;
   keyframes = k;
   segment = s;
-  passedKeyframe = -1;
+  nextKeyframe = -1;
 }
 
 void LEDPlayer::update(unsigned long currPos) {
   if (!activated) return;
-  
-  if (passedKeyframe + 1 < keyframes->getKeyframeAm()) {
-    if (currPos > keyframes->getKeyframe(passedKeyframe).time) {
-      passedKeyframe++;
-      KeyFrame next = keyframes->getKeyframe(passedKeyframe);
-      Serial.println("fade to: " + String(next.time) + " keyframe: " + String(passedKeyframe) );
-      Serial.println("r:" + String(next.col.red()) + "g:" + String(next.col.green()) + "b:" + String(next.col.blue()) );
-      float spd = 10000;
-      if ( next.time > 0 ) {
-        spd = 1000. / (next.time - currPos);
-        Serial.println(spd);
-      }
+
+  if (nextKeyframe + 1 < keyframes->getKeyframeAm()) {
+    if (currPos > keyframes->getKeyframe(nextKeyframe).time) {
+      nextKeyframe++;
+      KeyFrame next = keyframes->getKeyframe(nextKeyframe);
+      
+      float spd;
+      long fadeTime = next.time - currPos;
+      if ( fadeTime > 0 ) {
+        spd = 1000. / fadeTime;
+      } else spd = 10000;
+      
       segment->setFade(next.col, spd);
+      Serial.println("fade to keyframe nr: " + String(nextKeyframe) + " time:" + String(next.time) + " spd:" + String(spd) );
+      Serial.println("R:" + String(next.col.red()) + ", G:" + String(next.col.green()) + ", B:" + String(next.col.blue()) );
+      Serial.println();
     }
   }
 }
 
 void LEDPlayer::reset() {
-  passedKeyframe = -1;
+  nextKeyframe = -1;
 }
 
 

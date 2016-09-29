@@ -65,16 +65,19 @@ String readFile(String _fileName) {
   return _readBuffer;
 }
 
-KeyFrames parseLedFile(String readBuffer, KeyFrames *keyframes) {
+void parseLedFile(String readBuffer, KeyFrames *keyframes) {
   int startLine = 0;
   int cr = 0;
-  int i = 0;
 
   while (cr != -1) {
     cr = readBuffer.indexOf(newLineChar, startLine);
     String line;
     if (cr == -1) line = readBuffer.substring(startLine);
     else line = readBuffer.substring(startLine, cr);
+
+    startLine = cr + 1;
+    
+    if(line.length()==0) continue;
 
     int startInt = 0;
     int comma = 0;
@@ -100,10 +103,7 @@ KeyFrames parseLedFile(String readBuffer, KeyFrames *keyframes) {
     }
 
     keyframes->addKeyframe(time, Color(r, g, b, RGB_MODE));
-
-
-    startLine = cr + 1;
-    i++;
+    
 
     Serial.print("time: ");
     Serial.print(time);
