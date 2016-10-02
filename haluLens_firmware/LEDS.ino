@@ -8,54 +8,58 @@ Beam beams[BEAM_AM];
 Adafruit_NeoPixel leds = Adafruit_NeoPixel(LED_AM, PIN, NEO_GRB + NEO_KHZ800);
 
 Segment seg[] = {
-   Segment(0,5),  // 0  rainbow
-   Segment(0,5),  // 1  mask
-   Segment(0,2),  // 2  keyframes left
-   Segment(3,5),  // 3  keyframes right
+  Segment(0, 5), // 0  rainbow
+  Segment(0, 5), // 1  mask
+  Segment(0, 2), // 2  keyframes left
+  Segment(3, 5), // 3  keyframes right
 };
 
-byte segAm = sizeof(seg)/sizeof(Segment);
+byte segAm = sizeof(seg) / sizeof(Segment);
 Colore colore( LED_AM, seg, segAm, beams, BEAM_AM, &set_ledLib, &get_ledLib, &show_ledLib, &reset_ledLib );
 
 
-void setupLed(){
+void setupLed(boolean succes) {
   leds.begin(); // Initialize pins for output
   leds.show();  // Turn all LEDs off ASAP
-  seg[0].setRainbow(0.2,10,15);
-  seg[1].setBlendMode(MULTIPLY);
-  seg[1].setFade(Color(255, 255, 255, RGB_MODE),0.5);
+  if (succes) {
+    seg[0].setRainbow(0.2, 10, 15);
+    seg[1].setBlendMode(MULTIPLY);
+    seg[1].setFade(Color(255, 255, 255, RGB_MODE), 0.5);
+  } else {
+    seg[0].setFade(Color(20, 0, 0, RGB_MODE), 0.5);
+  }
 }
 
-void updateLed(){
+void updateLed() {
   colore.update(true);
-//  printFramerate();
+  //  printFramerate();
 }
 
-void printFramerate(){
+void printFramerate() {
   Serial.print("FrameRate: ");
   Serial.println(colore.getFPS()); // print framerate
 }
 
 
-void set_ledLib(int pixel, byte r, byte g, byte b){
+void set_ledLib(int pixel, byte r, byte g, byte b) {
   leds.setPixelColor(pixel, r, g, b);
 }
 
-void show_ledLib(){
+void show_ledLib() {
   leds.show();
 }
 
-void reset_ledLib(){
-  for(int i=0; i<LED_AM; i++){
-    leds.setPixelColor(i,0,0,0);
+void reset_ledLib() {
+  for (int i = 0; i < LED_AM; i++) {
+    leds.setPixelColor(i, 0, 0, 0);
   }
 }
 
-Color get_ledLib(int pixel){
+Color get_ledLib(int pixel) {
   uint32_t conn = leds.getPixelColor(pixel);  // retrieve the color that has already been saved
   byte b = conn & 255;       // unpack the color
   byte g = conn >> 8 & 255;
   byte r = conn >> 16 & 255;
-  Color pixelCol(r,g,b,RGB_MODE);
+  Color pixelCol(r, g, b, RGB_MODE);
   return pixelCol;
 }

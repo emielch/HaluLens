@@ -21,13 +21,15 @@ AudioControlSGTL5000     sgtl5000_1;
 #define SDCARD_SCK_PIN   14
 
 boolean playing = false;
+String audioFile = "";
+boolean serialControlMode = false;
 
 void setup() {
   Serial.begin(9600);
-   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB
-  }
-  setupLed();
+//  while (!Serial) {
+//    ; // wait for serial port to connect. Needed for native USB
+//  }
+  setupLed(true);
 
   // Audio connections require memory to work.  For more
   // detailed information, see the MemoryAndCpuUsage example
@@ -43,9 +45,10 @@ void setup() {
   SPI.setSCK(SDCARD_SCK_PIN);
   if (!(SD.begin(SDCARD_CS_PIN))) {
     // stop here, but print a message repetitively
+    Serial.println("Unable to access the SD card");
+    setupLed(false);
     while (1) {
-      Serial.println("Unable to access the SD card");
-      delay(500);
+      updateLed();
     }
   }
 
@@ -57,14 +60,18 @@ boolean timeout = false;
 unsigned int timeoutTime = 0;
 
 void loop() {
+  checkSerial();
   updateLed();
+  
+  if(serialControlMode) return;
+  
   updatePlayer();
-
+  
   if (touchRead(16) > 750) {
-    if(!playing){
+    if (!playing) {
       startPlaying();
     }
-    if(timeout) timeout = false;
+    if (timeout) timeout = false;
   } else if (touchRead(16) < 700 && playing) {
     if (timeout) {
       if (millis() > timeoutTime + 2000) {

@@ -1,7 +1,10 @@
 
 void startPlaying() {
+  char _audioFile[audioFile.length() + 1];
+  audioFile.toCharArray(_audioFile, sizeof(_audioFile));
+  
   playing = true;
-  playWav.play("AUDIO.WAV");
+  playWav.play(_audioFile);
   for (int i = 0; i < PLAYERSAM; i++) {
     players[i].reset();
   }

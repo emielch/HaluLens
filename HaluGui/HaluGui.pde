@@ -26,11 +26,14 @@ void settings() {
   float winFac = 0.7;
   //size(int(displayWidth*winFac), int(displayHeight*winFac), P3D);
   size(1366, 768, P3D);
+  //fullScreen(P3D);
 }
 
 void setup() {
   surface.setResizable(true);
   cp5 = new ControlP5(this);
+  printArray(Serial.list());
+  serialPort = new Serial(this, Serial.list()[0], 9600);
 
   int barsWidth = width-barsSidesMargin*2;
   audioBarYpos = height-audioBarHeight-scrollBarHeight-barsBottomMargin;
@@ -61,6 +64,8 @@ void draw() {
   if (mousePressed) {
     mouseDragged_nonblocking();
   }
+  
+  updateSerial();
 
   colorMode(RGB, 255);
   background(255);

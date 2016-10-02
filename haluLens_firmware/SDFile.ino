@@ -7,32 +7,52 @@ char newLineChar = ' '; // 0 undefined; 1 LF '\n'; 2 CR '\r'
 
 LEDPlayer players[PLAYERSAM];
 
-KeyFrames keyframes1;
-KeyFrames keyframes2;
+KeyFrames *keyframes1 = new KeyFrames;
+KeyFrames *keyframes2 = new KeyFrames;
 
+boolean foundLED = false;
 
 boolean readFiles() {
-  readBuffer = readFile("LED.TXT");
-  if (!readBuffer.equals("")) {
-    parseLedFile(readBuffer,&keyframes1);
-    players[0] = LEDPlayer(&keyframes1, &seg[2]);
-    players[1] = LEDPlayer(&keyframes1, &seg[3]);
-  } else {
-    readBuffer = readFile("LED1.TXT");
-    parseLedFile(readBuffer,&keyframes1);
-    if (readBuffer.equals("")) return false;
+  File dir = SD.open("/");
 
-    readBuffer = readFile("LED2.TXT");
-    parseLedFile(readBuffer,&keyframes2);
-    if (readBuffer.equals("")) {
-      players[0] = LEDPlayer(&keyframes1, &seg[2]);
-      players[1] = LEDPlayer(&keyframes1, &seg[3]);
-    }else {
-      players[0] = LEDPlayer(&keyframes1, &seg[2]);
-      players[1] = LEDPlayer(&keyframes2, &seg[3]);
+  while (true) {
+    File entry =  dir.openNextFile();
+    if (! entry) {
+      break;
+    }
+    if (entry.isDirectory()) {
+      continue;
+    }
+    String fileName = String(entry.name());
+
+    int wavIndex = fileName.indexOf(".wav");
+    if (wavIndex == -1) wavIndex = fileName.indexOf(".WAV");
+    if ( wavIndex == (int)fileName.length() - 4) {
+      audioFile = fileName;
+      Serial.println("Found audio: " + fileName);
+
+    }
+
+    int txtIndex = fileName.indexOf(".txt");
+    if (txtIndex == -1) txtIndex = fileName.indexOf(".TXT");
+
+    if ( txtIndex == (int)fileName.length() - 4 && !foundLED) {
+      Serial.println("Found LED: " + fileName);
+      readBuffer = readFile(fileName);
+      if (!readBuffer.equals("")) {
+        if (parseLedFile(readBuffer, keyframes1, keyframes2)) {
+          players[1] = LEDPlayer(keyframes2, &seg[3]);
+        } else {
+          players[1] = LEDPlayer(keyframes1, &seg[3]);
+        }
+        players[0] = LEDPlayer(keyframes1, &seg[2]);
+        foundLED = true;
+      }else Serial.println(fileName + " is empty!");
     }
   }
-  return true;
+
+  if (!foundLED) Serial.println("Found no .TXT files");
+  return foundLED;
 }
 
 String readFile(String _fileName) {
@@ -43,7 +63,6 @@ String readFile(String _fileName) {
   File ledFile = SD.open(fileName);
 
   if (ledFile) {
-    Serial.println(_fileName);
     // read from the file until there's nothing else in it:
     while (ledFile.available()) {
       char newChar = (char)ledFile.read();
@@ -65,9 +84,11 @@ String readFile(String _fileName) {
   return _readBuffer;
 }
 
-void parseLedFile(String readBuffer, KeyFrames *keyframes) {
+boolean parseLedFile(String readBuffer, KeyFrames *kf1, KeyFrames *kf2) {
   int startLine = 0;
   int cr = 0;
+  KeyFrames *keyframes = kf1;
+  boolean stereo = false;
 
   while (cr != -1) {
     cr = readBuffer.indexOf(newLineChar, startLine);
@@ -76,8 +97,14 @@ void parseLedFile(String readBuffer, KeyFrames *keyframes) {
     else line = readBuffer.substring(startLine, cr);
 
     startLine = cr + 1;
-    
-    if(line.length()==0) continue;
+
+    if (line.length() == 0) continue;
+    else if (line.length() == 1) {
+      keyframes = kf2;
+      stereo = true;
+      Serial.println("Stereo found!");
+      continue;
+    }
 
     int startInt = 0;
     int comma = 0;
@@ -103,7 +130,7 @@ void parseLedFile(String readBuffer, KeyFrames *keyframes) {
     }
 
     keyframes->addKeyframe(time, Color(r, g, b, RGB_MODE));
-    
+
 
     Serial.print("time: ");
     Serial.print(time);
@@ -114,5 +141,7 @@ void parseLedFile(String readBuffer, KeyFrames *keyframes) {
     Serial.print(" B: ");
     Serial.println(b);
   }
+
+  return stereo;
 
 }
