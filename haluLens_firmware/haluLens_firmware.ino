@@ -48,6 +48,7 @@ void setup() {
     Serial.println("Unable to access the SD card");
     setupLed(false);
     while (1) {
+      checkSerial();
       updateLed();
     }
   }

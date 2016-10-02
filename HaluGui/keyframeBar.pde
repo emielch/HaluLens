@@ -116,7 +116,7 @@ class KeyframeBar {
       }
     }
 
-    float posx = audioBar.getFacPosInWindow(audioBar.player.position())*w+x;
+    float posx = audioBar.getFacPosInWindow(audioBar.getPos())*w+x;
     if (!(posx<x || posx>x+w)) {
       stroke(150, 150, 150);
       strokeWeight(2);
@@ -156,7 +156,7 @@ class KeyframeBar {
   void moveToKF(boolean right) {
     if (!show) return;
     if (keyframes.isEmpty()) return;
-    int currTime = audioBar.player.position();
+    int currTime = audioBar.getPos();
     KeyFrame kf = keyframes.get(0);
     if (right) {
       for (int i=0; i<keyframes.size(); i++) {
@@ -173,7 +173,7 @@ class KeyframeBar {
         }
       }
     }
-    audioBar.player.cue(kf.time);
+    audioBar.setPos(kf.time);
     clearSelectedKF();
     addSelectedKF(kf);
   }
@@ -188,9 +188,9 @@ class KeyframeBar {
   void createKF() {
     colorMode(RGB, 255);
     if (!show) return;
-    int currPos = audioBar.player.position();
+    int currPos = audioBar.getPos();
     color col = getColorAt(currPos, keyframes);
-    KeyFrame newKF = new KeyFrame(audioBar.player.position(), col, this);
+    KeyFrame newKF = new KeyFrame(audioBar.getPos(), col, this);
 
     addKeyframe(newKF);
     clearSelectedKF();
@@ -209,7 +209,7 @@ class KeyframeBar {
     KeyFrame nextKF = new KeyFrame(0);
     int kfID = 0;
     for (int i=0; i<w; i+=3) {
-      float currPos = map(i, 0, w, audioBar.player.length()*audioBar.start, audioBar.player.length()*audioBar.end);
+      float currPos = map(i, 0, w, audioBar.getLength()*audioBar.start, audioBar.getLength()*audioBar.end);
       while (currPos>nextKF.time && kfID<keyframes.size()) {
         prevKF = nextKF;
         nextKF = keyframes.get(kfID);
@@ -283,8 +283,8 @@ class KeyframeBar {
   void selectKF() {
     if (!show) return;
     if (!( (mouseDownY>y && mouseDownY<y+h) || (mouseDownY<y && mouseY>y) || (mouseDownY>y+h && mouseY<y+h) )) return;
-    int selStart = (int)map(min(mouseDownX, mouseX), x, x+w, audioBar.player.length()*audioBar.start, audioBar.player.length()*audioBar.end);
-    int selStop = (int)map(max(mouseDownX, mouseX), x, x+w, audioBar.player.length()*audioBar.start, audioBar.player.length()*audioBar.end);
+    int selStart = (int)map(min(mouseDownX, mouseX), x, x+w, audioBar.getLength()*audioBar.start, audioBar.getLength()*audioBar.end);
+    int selStop = (int)map(max(mouseDownX, mouseX), x, x+w, audioBar.getLength()*audioBar.start, audioBar.getLength()*audioBar.end);
     for (int i=0; i<keyframes.size(); i++) {
       KeyFrame kf = keyframes.get(i);
       if (kf.time>selStart) {
@@ -302,8 +302,8 @@ class KeyframeBar {
         boolean allowedMove = true;
         for (int i=0; i<selectedKF.size(); i++) {
           KeyFrame kf = selectedKF.get(i);
-          int mouseStartTime = (int)map(mousePrevX, x, x+w, audioBar.player.length()*audioBar.start, audioBar.player.length()*audioBar.end);
-          int mouseEndTime = (int)map(mouseX, x, x+w, audioBar.player.length()*audioBar.start, audioBar.player.length()*audioBar.end);
+          int mouseStartTime = (int)map(mousePrevX, x, x+w, audioBar.getLength()*audioBar.start, audioBar.getLength()*audioBar.end);
+          int mouseEndTime = (int)map(mouseX, x, x+w, audioBar.getLength()*audioBar.start, audioBar.getLength()*audioBar.end);
           int timeMove = mouseEndTime - mouseStartTime;
           if (!kf.stageMove(timeMove)) {
             allowedMove = false;

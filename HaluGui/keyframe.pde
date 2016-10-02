@@ -25,7 +25,7 @@ class KeyFrame implements Comparable<KeyFrame> {
   boolean stageMove(int dt){
     int newTime = time + dt;
     stagedMove = dt;
-    if(newTime<0 || newTime>audioBar.player.length()) return false;
+    if(newTime<0 || newTime>audioBar.getLength()) return false;
     else return true;
   }
   

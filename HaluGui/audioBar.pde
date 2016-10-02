@@ -13,6 +13,10 @@ class AudioBar {
   float[] audioFrames;
 
   boolean mouseDown = false;
+  int temp_position = 0;
+  boolean tempPlaying = false;
+  long prevDraw = 0;
+  boolean updateWF = false;
 
   AudioBar(int _w, int _h, int _x, int _y) {
     wf = createGraphics(w, h);
@@ -25,9 +29,18 @@ class AudioBar {
   }
 
   void draw() {
+    if (updateWF) wf = drawWaveform();
+    if (!isPlaying() && tempPlaying) {
+      pause();
+    }
+    if (player==null && tempPlaying) {
+      long newTime = millis();
+      temp_position += newTime-prevDraw;
+      prevDraw = newTime;
+    }
     image(wf, x, y);
 
-    float posx = getFacPosInWindow(player.position())*w +x;
+    float posx = getFacPosInWindow(getPos())*w +x;
     if (!(posx<x || posx>x+w)) {
       stroke(0, 200, 0);
       strokeWeight(4);
@@ -35,25 +48,67 @@ class AudioBar {
     }
   }
 
-  float getCursor() {
-    return (float)player.position()/player.length();
+  boolean isPlaying() {
+    if (player==null) {
+      return tempPlaying;
+    }
+    return player.isPlaying();
   }
-  
+
+  void play() {
+    tempPlaying = true;
+    if (player==null) prevDraw = millis();
+    else player.play();
+    playPause.setImages(pause_n, pause_h, pause_p);
+  }
+
+  void pause() {
+    tempPlaying = false;
+    if (player!=null) player.pause();
+    playPause.setImages(play_n, play_h, play_p);
+  }
+
+  void setPos(int pos) {
+    pos = constrain(pos, 0, getLength());
+    if (player==null) temp_position = pos;
+    else player.cue(pos);
+  }
+
+  int getLength() {
+    if (player==null) return 600000;
+    return player.length();
+  }
+
+  int getPos() {
+    if (player==null) return temp_position;
+    return player.position();
+  }
+
+  float getCursor() {
+    return (float)getPos()/getLength();
+  }
+
   float getFacPosInWindow(float millis) {
-    return map(millis, player.length()*start, player.length()*end, 0, 1);
+    return map(millis, getLength()*start, getLength()*end, 0, 1);
   }
 
   void loadAudio(String fileName) {
-    audio = minim.loadSample(fileName, 2048);
+    try {
+      audio = minim.loadSample(fileName, 2048);
+    } 
+    catch (Exception e) {
+      return;
+    }
+    
     player = minim.loadFile(fileName, 2048);
     audioFrames = audio.getChannel(AudioSample.LEFT);
 
     resampleAudioFrames();
-
-    wf = drawWaveform();
+    updateWF = true;
   }
 
   void resampleAudioFrames() {
+    if (audio==null) return;
     int newSampleSize = max(int((audioFrames.length/w)*0.1*(end-start)), 1);
     if (wfSampleSize==newSampleSize) {
       return;
@@ -70,7 +125,9 @@ class AudioBar {
   }
 
   PGraphics drawWaveform() {
+    updateWF = false;
     PGraphics _wf = createGraphics(w, h, P3D);
+    if (audio==null) return wf;
     _wf.beginDraw();
     _wf.background(0);
     _wf.stroke(255);
@@ -91,22 +148,22 @@ class AudioBar {
     if (zoom) {
       resampleAudioFrames();
     }
-    wf = drawWaveform();
+    updateWF = true;
   }
 
   String getTimeCode() {
-    long millis = player.position();
+    long millis = getPos();
     long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
     millis -= TimeUnit.MINUTES.toMillis(minutes);
     long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
     millis -= TimeUnit.SECONDS.toMillis(seconds);
 
     StringBuilder sb = new StringBuilder(64);
-    sb.append(nf(int(minutes),2));
+    sb.append(nf(int(minutes), 2));
     sb.append(":");
-    sb.append(nf(int(seconds),2));
+    sb.append(nf(int(seconds), 2));
     sb.append(".");
-    sb.append(nf(int(millis),3));
+    sb.append(nf(int(millis), 3));
 
     return(sb.toString());
   }
@@ -127,8 +184,8 @@ class AudioBar {
 
   boolean mouseInteract() {
     if (mouseDown) {
-      int pos = (int)map(mouseX, x, x+w, player.length()*start, player.length()*end);
-      player.cue(pos);
+      int pos = (int)map(mouseX, x, x+w, getLength()*start, getLength()*end);
+      setPos(pos);
       return true;
     }
     return false;

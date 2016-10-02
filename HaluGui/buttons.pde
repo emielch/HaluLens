@@ -27,14 +27,17 @@ void setupButtons() {
   PImage paste_n = loadImage("buttons/paste_normal.png");
   PImage paste_h = loadImage("buttons/paste_hover.png");
   PImage paste_p = loadImage("buttons/paste_press.png");
-  
+  PImage audio_n = loadImage("buttons/audio_normal.png");
+  PImage audio_h = loadImage("buttons/audio_hover.png");
+  PImage audio_p = loadImage("buttons/audio_press.png");
+
   PImage zoomin_n = loadImage("buttons/zoomin_normal.png");
   PImage zoomin_h = loadImage("buttons/zoomin_hover.png");
   PImage zoomin_p = loadImage("buttons/zoomin_press.png");
   PImage zoomout_n = loadImage("buttons/zoomout_normal.png");
   PImage zoomout_h = loadImage("buttons/zoomout_hover.png");
   PImage zoomout_p = loadImage("buttons/zoomout_press.png");
-  
+
   PImage mono = loadImage("buttons/mono.png");
   PImage stereo = loadImage("buttons/stereo.png");
 
@@ -98,27 +101,47 @@ void setupButtons() {
     .setState(true)
     ;
     
+  cp5.addButton("exit")
+    .setPosition(width-100-buttonTopMargin, buttonTopMargin)
+    .setSize(100,100);
+    ;
+
+  cp5.addButton("selectAudioFile")
+    .setPosition(audioBar.x+audioBar.w+(barsSidesMargin-audio_n.width)/2, scrollBar.y+scrollBar.h-audio_n.width)
+    .setImages(audio_n, audio_h, audio_p)
+    .updateSize()
+    ;
+
   float buttonScale = 0.8;
   int h = (audioBar.h+scrollBar.h)/2;
-  
+
   zoomin_n.resize(int(h * buttonScale), 0);
   zoomin_h.resize(int(h * buttonScale), 0);
   zoomin_p.resize(int(h * buttonScale), 0);
   zoomout_n.resize(int(h * buttonScale), 0);
   zoomout_h.resize(int(h * buttonScale), 0);
   zoomout_p.resize(int(h * buttonScale), 0);
-  
+
   cp5.addButton("zoomIn")
     .setPosition(audioBar.x-h+int(h*(1-buttonScale)/2), audioBar.y+int(h*(1-buttonScale)))
     .setImages(zoomin_n, zoomin_h, zoomin_p)
     .updateSize()
     ;
-    
+
   cp5.addButton("zoomOut")
     .setPosition(audioBar.x-h+int(h*(1-buttonScale)/2), audioBar.y+h-int(h*(1-buttonScale)/2))
     .setImages(zoomout_n, zoomout_h, zoomout_p)
     .updateSize()
     ;
+    
+  cp5.addScrollableList("Serial_List")
+     .setPosition(leftEye.x, buttonTopMargin)
+     .setSize(200, 100)
+     .setBarHeight(20)
+     .setItemHeight(20)
+     .addItems(Serial.list())
+     // .setType(ScrollableList.LIST) // currently supported DROPDOWN and LIST
+     ;
 }
 
 void deleteKF() {
@@ -136,6 +159,10 @@ void selectFile() {
   selectInput("Select a file to open:", "openFile");
 }
 
+void selectAudioFile() {
+  selectInput("Select an audio file:", "openAudioFile");
+}
+
 void copyKF() {
   clipboard = new ArrayList<KeyFrame>(selectedKF);
   Collections.sort(clipboard);
@@ -146,12 +173,12 @@ void pasteKF() {
   if (selectedKFBar==null) return;
   selectedKFBar.clearSelectedKF();
   int startTime = clipboard.get(0).time;
-  int cursorTime = audioBar.player.position();
+  int cursorTime = audioBar.getPos();
 
   for (int i=0; i<clipboard.size(); i++) {
 
     int time = clipboard.get(i).time - startTime + cursorTime;
-    if (time>audioBar.player.length()) break;
+    if (time>audioBar.getLength()) break;
     KeyFrame kf = new KeyFrame(time, clipboard.get(i).col, selectedKFBar);
     selectedKFBar.addKeyframe(kf);
     selectedKFBar.addSelectedKF(kf);
@@ -159,12 +186,10 @@ void pasteKF() {
 }
 
 void togglePlaying() {
-  if (audioBar.player.isPlaying()) {
-    audioBar.player.pause();
-    playPause.setImages(play_n, play_h, play_p);
+  if (audioBar.isPlaying()) {
+    audioBar.pause();
   } else {
-    audioBar.player.play();
-    playPause.setImages(pause_n, pause_h, pause_p);
+    audioBar.play();
   }
 }
 
@@ -181,16 +206,28 @@ void stereoToggle(boolean theFlag) {
   }
 }
 
-void zoomIn(){
+void zoomIn() {
   scrollBar.move(audioBar.getCursor(), 1.5);
   audioBar.zoom(true, scrollBar.start, scrollBar.end);
   kfBarLeft.renderBackground();
   kfBarRight.renderBackground();
 }
 
-void zoomOut(){
+void zoomOut() {
   scrollBar.move(audioBar.getCursor(), 0.66);
   audioBar.zoom(true, scrollBar.start, scrollBar.end);
   kfBarLeft.renderBackground();
   kfBarRight.renderBackground();
+}
+
+void Serial_List(int n) {
+  String portName = cp5.get(ScrollableList.class, "Serial_List").getItem(n).get("name").toString();
+  println("selected port: ", portName);
+
+  CColor c = new CColor();
+  c.setBackground(color(255, 0, 0));
+  cp5.get(ScrollableList.class, "Serial_List").getItem(n).put("color", c);
+  
+  if(serialPort!=null) serialPort.stop();
+  serialPort = new Serial(this, portName, 9600);
 }

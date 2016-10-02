@@ -7,8 +7,23 @@ void openFile(File selection) {
   } else {
     filePath = selection.getAbsolutePath();
     println("User selected " + filePath);
-    String lines[] = loadStrings(filePath);
-    parseFile(lines);
+    loadLEDFile(filePath);
+  }
+}
+
+void loadLEDFile(String path) {
+  String lines[] = loadStrings(path);
+  if(lines==null) return;
+  parseFile(lines);
+}
+
+void openAudioFile(File selection) {
+  if (selection == null) {
+    println("Window was closed or the user hit cancel.");
+  } else {
+    String audioPath = selection.getAbsolutePath();
+    println("User selected " + audioPath);
+    audioBar.loadAudio(audioPath);
   }
 }
 
@@ -30,7 +45,7 @@ void parseFile(String lines[]) {
       g = Integer.parseInt(values[2]);
       b = Integer.parseInt(values[3]);
       println(t+"'"+r+"'"+g+"'"+b);
-      colorMode(RGB,255);
+      colorMode(RGB, 255);
       KeyFrame newKF = new KeyFrame(t, color(r, g, b), kfBar);
       kfBar.addKeyframe(newKF);
     } else if (values[0].charAt(0)=='-') {

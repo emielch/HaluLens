@@ -16,7 +16,7 @@ class EyePreview {
   }
 
   void draw() {
-    int currPos = audioBar.player.position();
+    int currPos = audioBar.getPos();
     col = getColorAt(currPos,keyframeBar.keyframes);
 
     ellipseMode(CORNER);

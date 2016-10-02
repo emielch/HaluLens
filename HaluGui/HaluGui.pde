@@ -33,33 +33,34 @@ void setup() {
   surface.setResizable(true);
   cp5 = new ControlP5(this);
   printArray(Serial.list());
-  if (Serial.list().length>0) {
-    serialPort = new Serial(this, Serial.list()[0], 9600);
-  }
+  //if (Serial.list().length>0) {
+  //  serialPort = new Serial(this, Serial.list()[0], 9600);
+  //}
 
   int barsWidth = width-barsSidesMargin*2;
   audioBarYpos = height-audioBarHeight-scrollBarHeight-barsBottomMargin;
   kfBarYpos = audioBarYpos-kfBarHeight*2;
   minim = new Minim(this);
   audioBar = new AudioBar(barsWidth, audioBarHeight, barsSidesMargin, audioBarYpos);
-  audioBar.loadAudio("Audio1.wav");
+  audioBar.loadAudio("AUDIO.WAV");
   scrollBar = new ScrollBar(barsWidth, scrollBarHeight, barsSidesMargin, audioBarYpos+audioBarHeight);
   colorPicker = new ColorPicker(buttonTopMargin, int(buttonSize*1.3)+buttonTopMargin, 500, 250);
   kfBarLeft = new KeyframeBar(barsWidth, kfBarHeight, barsSidesMargin, kfBarYpos, audioBar, colorPicker, 0);
   kfBarRight = new KeyframeBar(barsWidth, kfBarHeight, barsSidesMargin, kfBarYpos+kfBarHeight, audioBar, colorPicker, 1);
 
   int eyeSize = int((width-colorPicker.w-colorPicker.x-130*2-15)*0.5);
-  leftEye = new EyePreview(colorPicker.x+colorPicker.w+130, barsBottomMargin, eyeSize, int(eyeSize*0.8), audioBar, kfBarLeft);
-  rightEye = new EyePreview(leftEye.x+leftEye.w+30, barsBottomMargin, leftEye.w, leftEye.h, audioBar, kfBarRight);
+  leftEye = new EyePreview(colorPicker.x+colorPicker.w+130, colorPicker.y, eyeSize, int(eyeSize*0.8), audioBar, kfBarLeft);
+  rightEye = new EyePreview(leftEye.x+leftEye.w+30, leftEye.y, leftEye.w, leftEye.h, audioBar, kfBarRight);
 
-  for (int i=0; i<5; i++) {
-    KeyFrame newKF = new KeyFrame((int)random(0, 350000), color(random(0, 255), random(0, 255), random(0, 255)), kfBarLeft);
-    kfBarLeft.addKeyframe(newKF);
-    newKF = new KeyFrame((int)random(0, 350000), color(random(0, 255), random(0, 255), random(0, 255)), kfBarRight);
-    kfBarRight.addKeyframe(newKF);
-  }
+  //for (int i=0; i<5; i++) {
+  //  KeyFrame newKF = new KeyFrame((int)random(0, 350000), color(random(0, 255), random(0, 255), random(0, 255)), kfBarLeft);
+  //  kfBarLeft.addKeyframe(newKF);
+  //  newKF = new KeyFrame((int)random(0, 350000), color(random(0, 255), random(0, 255), random(0, 255)), kfBarRight);
+  //  kfBarRight.addKeyframe(newKF);
+  //}
 
   setupButtons();
+  loadLEDFile("LED.TXT");
 }
 
 void draw() {
