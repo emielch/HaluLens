@@ -3,6 +3,7 @@ import processing.serial.*;
 Serial serialPort;       
 
 void updateSerial() {
+  if(serialPort==null) return;
   colorMode(RGB,255);
   
   serialPort.write(str(red(leftEye.col)));

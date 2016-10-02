@@ -33,7 +33,9 @@ void setup() {
   surface.setResizable(true);
   cp5 = new ControlP5(this);
   printArray(Serial.list());
-  serialPort = new Serial(this, Serial.list()[0], 9600);
+  if (Serial.list().length>0) {
+    serialPort = new Serial(this, Serial.list()[0], 9600);
+  }
 
   int barsWidth = width-barsSidesMargin*2;
   audioBarYpos = height-audioBarHeight-scrollBarHeight-barsBottomMargin;
@@ -64,7 +66,7 @@ void draw() {
   if (mousePressed) {
     mouseDragged_nonblocking();
   }
-  
+
   updateSerial();
 
   colorMode(RGB, 255);
