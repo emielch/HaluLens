@@ -5,14 +5,14 @@ void openFile(File selection) {
   if (selection == null) {
     println("Window was closed or the user hit cancel.");
   } else {
-    filePath = selection.getAbsolutePath();
-    println("User selected " + filePath);
-    loadLEDFile(filePath);
+    println("User selected " + selection.getAbsolutePath());
+    loadLEDFile(selection.getAbsolutePath());
   }
 }
 
-void loadLEDFile(String path) {
-  String lines[] = loadStrings(path);
+void loadLEDFile(String file) {
+  filePath = dataPath(file);
+  String lines[] = loadStrings(filePath);
   if(lines==null) return;
   parseFile(lines);
 }
