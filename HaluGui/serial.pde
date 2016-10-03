@@ -19,7 +19,3 @@ void updateSerial() {
   serialPort.write(str(blue(rightEye.col)));
   serialPort.write("\r\n");
 }
-
-void stop() {
-  if(serialPort!=null) serialPort.stop();
-} 

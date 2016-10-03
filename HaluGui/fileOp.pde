@@ -13,7 +13,7 @@ void openFile(File selection) {
 void loadLEDFile(String file) {
   filePath = dataPath(file);
   String lines[] = loadStrings(filePath);
-  if(lines==null) return;
+  if (lines==null) return;
   parseFile(lines);
 }
 
@@ -45,9 +45,11 @@ void parseFile(String lines[]) {
       g = Integer.parseInt(values[2]);
       b = Integer.parseInt(values[3]);
       println(t+"'"+r+"'"+g+"'"+b);
-      colorMode(RGB, 255);
-      KeyFrame newKF = new KeyFrame(t, color(r, g, b), kfBar);
-      kfBar.addKeyframe(newKF);
+      if (t>=0 && t<=audioBar.getLength()) {
+        colorMode(RGB, 255);
+        KeyFrame newKF = new KeyFrame(t, color(r, g, b), kfBar);
+        kfBar.addKeyframe(newKF);
+      } else println("keyframe out of bounds!");
     } else if (values[0].charAt(0)=='-') {
       kfBar = kfBarRight;
       stereo = true;
@@ -60,6 +62,7 @@ void parseFile(String lines[]) {
 }
 
 void saveFile() {
+  println("Saving file");
   if (filePath=="") {
     selectInput("Save:", "setFile");
     return;

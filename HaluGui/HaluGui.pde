@@ -42,6 +42,7 @@ PVector readSizeFile(){
 }
 
 void setup() {
+  prepareExitHandler();
   surface.setResizable(true);
   cp5 = new ControlP5(this);
   printArray(Serial.list());
@@ -97,6 +98,17 @@ void draw() {
   text(audioBar.getTimeCode(), playPause.getPosition()[0]+playPause.getWidth()+20, playPause.getPosition()[1]+playPause.getHeight());
   textSize(20);
   text(filePath, barsSidesMargin, height-10);
+}
+
+private void prepareExitHandler() {
+  Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+    public void run () {
+      println("closing");
+      saveFile();
+      if (serialPort!=null) serialPort.stop();
+    }
+  }
+  ));
 }
 
 void renderKFBackgrounds() {
