@@ -23,10 +23,22 @@ int mouseDownX, mouseDownY;
 boolean stereoMode = true;
 
 void settings() {
-  float winFac = 0.7;
-  //size(int(displayWidth*winFac), int(displayHeight*winFac), P3D);
-  size(1366, 768, P3D);
+  PVector size = readSizeFile();
+  println("Window size: ", size);
+  size(int(size.x), int(size.y), P3D);
   //fullScreen(P3D);
+}
+
+PVector readSizeFile(){
+  float winFac = 0.7;
+  PVector size = new PVector(int(displayWidth*winFac), int(displayHeight*winFac));
+  String lines[] = loadStrings("windowsize.txt");
+  if(lines!=null){
+    if(lines.length<2) return size;;
+    size.x = Integer.parseInt(lines[0]);
+    size.y = Integer.parseInt(lines[1]);
+  }
+  return size;
 }
 
 void setup() {

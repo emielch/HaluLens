@@ -1,11 +1,15 @@
-#define PIN 0
+//#define PIN 0  // neopixel
+
+#define DATAPIN    4  // dotstar
+#define CLOCKPIN   5// dotstar
 
 #define BEAM_AM 10
 Beam beams[BEAM_AM];
 
 #define LED_AM 6 // Number of LEDs in strip
 
-Adafruit_NeoPixel leds = Adafruit_NeoPixel(LED_AM, PIN, NEO_GRB + NEO_KHZ800);
+//Adafruit_NeoPixel leds = Adafruit_NeoPixel(LED_AM, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_DotStar leds = Adafruit_DotStar(LED_AM, DATAPIN, CLOCKPIN, DOTSTAR_BGR);
 
 Segment seg[] = {
   Segment(0, 5), // 0  rainbow
