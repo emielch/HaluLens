@@ -38,7 +38,7 @@ class ColorPicker {
       sliders.get(i).setColor(hue, sat, bri);
     }
     selectedKF.col = color(hue, sat, bri);
-    if (valID!=-1)kfBar.renderBackground();
+    if (valID!=-1)kfBar.setRenderBG();
   }
 
   void clearKF() {

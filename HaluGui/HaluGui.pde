@@ -25,7 +25,7 @@ boolean stereoMode = true;
 void settings() {
   PVector size = readSizeFile();
   println("Window size: ", size);
-  size(int(size.x), int(size.y), P3D);
+  size(int(size.x), int(size.y), P2D);
   //fullScreen(P3D);
 }
 
@@ -43,7 +43,6 @@ PVector readSizeFile(){
 
 void setup() {
   prepareExitHandler();
-  surface.setResizable(true);
   cp5 = new ControlP5(this);
   printArray(Serial.list());
   //if (Serial.list().length>0) {
@@ -114,8 +113,8 @@ private void prepareExitHandler() {
 void renderKFBackgrounds() {
   Collections.sort(kfBarLeft.keyframes);
   Collections.sort(kfBarRight.keyframes);
-  kfBarLeft.renderBackground();
-  kfBarRight.renderBackground();
+  kfBarLeft.setRenderBG();
+  kfBarRight.setRenderBG();
 }
 
 
@@ -126,8 +125,8 @@ void mouseWheel(MouseEvent event) {
     if (e>0) scrollBar.move(center+scrollBar.window*0.05, 1);
     else scrollBar.move(center-scrollBar.window*0.05, 1);
     audioBar.zoom(true, scrollBar.start, scrollBar.end);
-    kfBarLeft.renderBackground();
-    kfBarRight.renderBackground();
+    kfBarLeft.setRenderBG();
+    kfBarRight.setRenderBG();
   } else {
     if (e>0) zoomOut();
     else zoomIn();
@@ -138,8 +137,8 @@ void mouseWheel(MouseEvent event) {
 void mouseDragged_nonblocking() {
   if (scrollBar.mouseInteract()) {
     audioBar.zoom(false, scrollBar.start, scrollBar.end);
-    kfBarLeft.renderBackground();
-    kfBarRight.renderBackground();
+    kfBarLeft.setRenderBG();
+    kfBarRight.setRenderBG();
   }
   if (audioBar.mouseInteract()) {
   }
@@ -157,8 +156,8 @@ void mousePressed() {
   mouseDownY = mouseY;
   if (scrollBar.mousePressed()) {
     audioBar.zoom(false, scrollBar.start, scrollBar.end);
-    kfBarLeft.renderBackground();
-    kfBarRight.renderBackground();
+    kfBarLeft.setRenderBG();
+    kfBarRight.setRenderBG();
   }
   if (audioBar.mousePressed()) {
   }

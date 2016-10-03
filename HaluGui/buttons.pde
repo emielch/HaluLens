@@ -151,8 +151,8 @@ void deleteKF() {
   }
   selectedKF.clear();
   colorPicker.clearKF();
-  kfBarLeft.renderBackground();
-  kfBarRight.renderBackground();
+  kfBarLeft.setRenderBG();
+  kfBarRight.setRenderBG();
 }
 
 void selectFile() {
@@ -209,15 +209,15 @@ void stereoToggle(boolean theFlag) {
 void zoomIn() {
   scrollBar.move(audioBar.getCursor(), 1.5);
   audioBar.zoom(true, scrollBar.start, scrollBar.end);
-  kfBarLeft.renderBackground();
-  kfBarRight.renderBackground();
+  kfBarLeft.setRenderBG();
+  kfBarRight.setRenderBG();
 }
 
 void zoomOut() {
   scrollBar.move(audioBar.getCursor(), 0.66);
   audioBar.zoom(true, scrollBar.start, scrollBar.end);
-  kfBarLeft.renderBackground();
-  kfBarRight.renderBackground();
+  kfBarLeft.setRenderBG();
+  kfBarRight.setRenderBG();
 }
 
 void Serial_List(int n) {

@@ -56,8 +56,8 @@ void parseFile(String lines[]) {
       stereoToggle.setState(true);
     }
   }
-  kfBarLeft.renderBackground();
-  kfBarRight.renderBackground();
+  kfBarLeft.setRenderBG();
+  kfBarRight.setRenderBG();
   stereoToggle.setState(stereo);
 }
 

@@ -20,6 +20,7 @@ class KeyframeBar {
   int mousePrevX;
 
   PGraphics bg;
+  boolean renderBG = false;
 
   AudioBar audioBar;
   ColorPicker colorPicker;
@@ -95,11 +96,15 @@ class KeyframeBar {
     }
     ));
 
-    renderBackground();
+    setRenderBG();
   }
 
   void draw() {
     if (!show) return;
+    if (renderBG){
+      renderBackground();
+      renderBG = false;
+    }
     image(bg, x, y);
     rectMode(CENTER);
 
@@ -182,7 +187,7 @@ class KeyframeBar {
     if (!show) return;
     keyframes.add(kf);
     Collections.sort(keyframes);
-    renderBackground();
+    setRenderBG();
   }
 
   void createKF() {
@@ -196,12 +201,15 @@ class KeyframeBar {
     clearSelectedKF();
     addSelectedKF(newKF);
   }
-
+  
+  void setRenderBG(){
+    renderBG = true;
+  }
 
   void renderBackground() {
     if (!show) return;
     colorMode(RGB, 255);
-    bg = createGraphics(w, h);
+    bg = createGraphics(w, h, P2D);
     bg.beginDraw();
     bg.background(0);
 

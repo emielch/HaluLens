@@ -126,7 +126,7 @@ class AudioBar {
 
   PGraphics drawWaveform() {
     updateWF = false;
-    PGraphics _wf = createGraphics(w, h, P3D);
+    PGraphics _wf = createGraphics(w, h, P2D);
     if (audio==null) return wf;
     _wf.beginDraw();
     _wf.background(0);
