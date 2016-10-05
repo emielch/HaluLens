@@ -56,7 +56,7 @@ void setup() {
   audioBar = new AudioBar(barsWidth, audioBarHeight, barsSidesMargin, audioBarYpos);
   audioBar.loadAudio("AUDIO.WAV");
   scrollBar = new ScrollBar(barsWidth, scrollBarHeight, barsSidesMargin, audioBarYpos+audioBarHeight);
-  colorPicker = new ColorPicker(buttonTopMargin, int(buttonSize*1.3)+buttonTopMargin, 500, 250);
+  colorPicker = new ColorPicker(buttonTopMargin, int(buttonSize*1.2)+buttonTopMargin, 500, 230);
   kfBarLeft = new KeyframeBar(barsWidth, kfBarHeight, barsSidesMargin, kfBarYpos, audioBar, colorPicker, 0);
   kfBarRight = new KeyframeBar(barsWidth, kfBarHeight, barsSidesMargin, kfBarYpos+kfBarHeight, audioBar, colorPicker, 1);
 
@@ -122,14 +122,14 @@ void mouseWheel(MouseEvent event) {
   float e = event.getCount();
   if (shiftDown) {
     float center = (scrollBar.start+scrollBar.end)/2;
-    if (e>0) scrollBar.move(center+scrollBar.window*0.05, 1);
-    else scrollBar.move(center-scrollBar.window*0.05, 1);
+    scrollBar.move(center+e*scrollBar.window*0.05, 1);
+    
     audioBar.zoom(true, scrollBar.start, scrollBar.end);
     kfBarLeft.setRenderBG();
     kfBarRight.setRenderBG();
   } else {
-    if (e>0) zoomOut();
-    else zoomIn();
+    if (e>0) zoomOut(abs(e));
+    else zoomIn(abs(e));
   }
 }
 

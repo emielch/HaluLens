@@ -125,12 +125,14 @@ void setupButtons() {
   cp5.addButton("zoomIn")
     .setPosition(audioBar.x-h+int(h*(1-buttonScale)/2), audioBar.y+int(h*(1-buttonScale)))
     .setImages(zoomin_n, zoomin_h, zoomin_p)
+    .setValue(1)
     .updateSize()
     ;
 
   cp5.addButton("zoomOut")
     .setPosition(audioBar.x-h+int(h*(1-buttonScale)/2), audioBar.y+h-int(h*(1-buttonScale)/2))
     .setImages(zoomout_n, zoomout_h, zoomout_p)
+    .setValue(1)
     .updateSize()
     ;
     
@@ -206,15 +208,15 @@ void stereoToggle(boolean theFlag) {
   }
 }
 
-void zoomIn() {
-  scrollBar.move(audioBar.getCursor(), 1.5);
+void zoomIn(float am) {
+  scrollBar.move(audioBar.getCursor(), 1.5*am);
   audioBar.zoom(true, scrollBar.start, scrollBar.end);
   kfBarLeft.setRenderBG();
   kfBarRight.setRenderBG();
 }
 
-void zoomOut() {
-  scrollBar.move(audioBar.getCursor(), 0.66);
+void zoomOut(float am) {
+  scrollBar.move(audioBar.getCursor(), 0.66*am);
   audioBar.zoom(true, scrollBar.start, scrollBar.end);
   kfBarLeft.setRenderBG();
   kfBarRight.setRenderBG();
