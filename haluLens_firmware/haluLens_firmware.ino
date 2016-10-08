@@ -74,9 +74,9 @@ void loop() {
       startPlaying();
     }
     if (timeout) timeout = false;
-  } else if (touchRead(16) < 700 && playing) {
+  } else if (touchRead(16) < 650 && playing) {
     if (timeout) {
-      if (millis() > timeoutTime + 2000) {
+      if (millis() > timeoutTime + 10000) {
         stopPlaying();
         timeout = false;
       }
