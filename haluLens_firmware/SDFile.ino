@@ -25,18 +25,18 @@ boolean readFiles() {
     }
     String fileName = String(entry.name());
 
-    int wavIndex = fileName.indexOf(".wav");
-    if (wavIndex == -1) wavIndex = fileName.indexOf(".WAV");
-    if ( wavIndex == (int)fileName.length() - 4) {
+//    int wavIndex = fileName.indexOf(".wav");
+//    if (wavIndex == -1) wavIndex = fileName.indexOf(".WAV");
+    if ( fileName.equals("AUDIO.WAV")) {
       audioFile = fileName;
       Serial.println("Found audio: " + fileName);
 
     }
 
-    int txtIndex = fileName.indexOf(".txt");
-    if (txtIndex == -1) txtIndex = fileName.indexOf(".TXT");
+//    int txtIndex = fileName.indexOf(".txt");
+//    if (txtIndex == -1) txtIndex = fileName.indexOf(".TXT");
 
-    if ( txtIndex == (int)fileName.length() - 4 && !foundLED) {
+    if ( fileName.equals("LED.TXT") && !foundLED) {
       Serial.println("Found LED: " + fileName);
       readBuffer = readFile(fileName);
       if (!readBuffer.equals("")) {
